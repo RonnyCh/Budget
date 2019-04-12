@@ -108,25 +108,25 @@ consol %>% filter(Group=='Car')
 
 
 
-
-
-
-
-## some useful code to add...... 
-baskets.df <- rbind(baskets.df, “7th” = c(7, 4))
-
+# test actual data
+compare <- consol %>% filter(Month=='Mar' & Group=='Salary')
+compare$status <- 'actual'
+compare <- compare[,c(1,2,3,4,7)]
 
 
 # create a forecast trend
-Date <- seq(as.Date("1/1/2019","%d/%m/%Y"), by = "week", length.out = 12)
-Amount <- seq(250, 250, length.out = 12)
+Date <- seq(as.Date("5/3/2019","%d/%m/%Y"), by = "week", length.out = 2)
+Amount <- seq(2061/2, 2061/2, length.out = 2)
 df <- data.frame(Date,Amount)
+df$Description <- 'Mimi Weekly Salary'
 df$Group <- 'Salary'
+df$status <- 'Forecast'
 
-##### add another line
-Date <- seq(as.Date("1/1/2019","%d/%m/%Y"), by = "week", length.out = 12)
-Amount <- seq(250, 250, length.out = 12)
-df2 <- data.frame(Date,Amount)
-df2$Group <- 'Test'
 
-rbind(df,df2)
+## combine actual and forecast
+compare <- rbind(compare,df)
+
+
+# review
+t <-  compare %>% select(Group,status,Amount) %>% group_by(Group,status) %>% summarize(Amt = sum(Amount)) %>% spread(status,Amt)
+t %>% mutate(var=actual-Forecast)
